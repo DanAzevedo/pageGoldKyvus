@@ -1,5 +1,6 @@
 const urlParams = new URLSearchParams(window.location.search);
-const userId = urlParams.get("userId");
+const asaasId = urlParams.get("asaasId");
+const carId = urlParams.get("carId");
 const botao = document.querySelector('.bottom-button');
 
 botao.addEventListener('click', async () => {
