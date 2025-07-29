@@ -51,7 +51,7 @@ botao.addEventListener('click', async () => {
         const hoje = new Date().toISOString().split('T')[0];
 
         // Chama seu backend enviando email, valor, vencimento, asaasId e carId
-        const res = await fetch('https://danazevedo.github.io/pageGoldKyvus', {
+        const res = await fetch('https://asaas-proxy-api-703360123160.southamerica-east1.run.app/api/criarAssinaturaMembroAsaas', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
