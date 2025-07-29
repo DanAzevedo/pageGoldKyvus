@@ -4,8 +4,8 @@ const carId = urlParams.get("carId");
 const botao = document.querySelector('.bottom-button');
 
 botao.addEventListener('click', async () => {
-    if (!userId) {
-        alert('ID de usuário não encontrado. Acesse o link corretamente.');
+    if (!asaasId || !carId) {
+        alert('Informações incompletas na URL. Acesse o link corretamente.');
         return;
     }
 
