@@ -4,7 +4,7 @@ const botaoPlanoGold = document.querySelector('.bottom-button');
 botaoPlanoGold.addEventListener('click', async () => {
   // Dados que você quer enviar para criar a assinatura
   const payload = {
-    customer: "cus_123456",  // Exemplo: id do cliente na Asaas
+    customer: "cus_000123842344",  // Exemplo: id do cliente na Asaas
     billingType: "CREDIT_CARD",
     nextDueDate: "2025-08-30",
     value: 9.90,
