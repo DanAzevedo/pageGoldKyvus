@@ -55,11 +55,12 @@ botao.addEventListener('click', async () => {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                email: email,
-                valor: 9.90,
-                vencimento: hoje,
-                asaasId: asaasId,
-                carId: carId
+                  "billingType": "CREDIT_CARD",
+                  "cycle": "MONTHLY",
+                  "customer": "<customer>",
+                  "value": 9.90,
+                  "nextDueDate": "<nextDueDate>",
+                  "description": "Assinatura mensal membro"
             })
         });
 
