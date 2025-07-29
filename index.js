@@ -1,81 +1,54 @@
+// Captura os parâmetros da URL
 const urlParams = new URLSearchParams(window.location.search);
-const asaasId = urlParams.get("asaasId"); // id do usuário Asaas
-const carId = urlParams.get("carId");     // id do carro
-const botao = document.querySelector('.bottom-button');
+const asaasId = urlParams.get('asaasId'); // ex: cus_000xxx
+const carId = urlParams.get('carId');     // ex: ODvqxxx
 
-botao.addEventListener('click', async () => {
-    if (!asaasId || !carId) {
-        alert('Parâmetros ausentes. Acesse o link corretamente.');
-        return;
-    }
+const mensagemDiv = document.getElementById('mensagem');
 
-    botao.disabled = true;
-    botao.textContent = 'Processando...';
+// Verifica se os parâmetros existem
+if (!asaasId || !carId) {
+  mensagemDiv.textContent = 'Parâmetros ausentes na URL.';
+  throw new Error('Parâmetros obrigatórios não fornecidos.');
+}
 
-    try {
-        const db = firebase.firestore();
+// Gera data de vencimento (amanhã)
+const today = new Date();
+const nextDueDate = new Date(today.setDate(today.getDate() + 1))
+  .toISOString()
+  .split('T')[0]; // Formato YYYY-MM-DD
 
-        // Busca o usuário na coleção tb_users pelo campo IDAssas
-        const querySnapshot = await db.collection('tb_users')
-            .where('IDAssas', '==', asaasId)
-            .limit(1)
-            .get();
+// Monta o corpo da requisição
+const body = {
+  billingType: "CREDIT_CARD",
+  cycle: "MONTHLY",
+  customer: asaasId,
+  value: 9.90,
+  nextDueDate: nextDueDate,
+  description: "Assinatura mensal membro"
+};
 
-        console.log("Buscando IDAssas com:", asaasId);
-
-        const docs = await db.collection('tb_users').get();
-        docs.forEach(d => {
-          const data = d.data();
-          console.log("DOC:", d.id, "IDAssas:", data.IDAssas);
-        });
-
-
-        if (querySnapshot.empty) {
-            alert('Usuário não encontrado.');
-            botao.disabled = false;
-            botao.textContent = 'Adquira o Plano Gold';
-            return;
-        }
-
-        const doc = querySnapshot.docs[0];
-        const userData = doc.data();
-        const email = userData.email;
-
-        if (!email) {
-            alert('E-mail do usuário não está cadastrado.');
-            botao.disabled = false;
-            botao.textContent = 'Adquira o Plano Gold';
-            return;
-        }
-
-        const hoje = new Date().toISOString().split('T')[0];
-
-        // Chama seu backend enviando email, valor, vencimento, asaasId e carId
-        const res = await fetch('https://asaas-proxy-api-703360123160.southamerica-east1.run.app/api/criarAssinaturaMembroAsaas', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-                  "billingType": "CREDIT_CARD",
-                  "cycle": "MONTHLY",
-                  "customer": "<customer>",
-                  "value": 9.90,
-                  "nextDueDate": "<nextDueDate>",
-                  "description": "Assinatura mensal membro"
-            })
-        });
-
-        const result = await res.json();
-
-        if (result.checkoutUrl) {
-            window.location.href = result.checkoutUrl;
-        } else {
-            throw new Error(result.error || 'Erro inesperado ao gerar pagamento.');
-        }
-
-    } catch (err) {
-        console.error(err);
-        alert('Erro ao processar pagamento: ' + err.message);
-        botao.disabled = false;
-        botao.textContent = 'Adquira o Plano Gold';
-    }
+// Faz a requisição para o proxy
+fetch("https://asaas-proxy-api-703360123160.southamerica-east1.run.app/api/criarAssinaturaMembroAsaas", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json"
+  },
+  body: JSON.stringify(body)
+})
+.then(response => {
+  if (!response.ok) {
+    return response.text().then(text => {
+      throw new Error(`Erro do servidor: ${text}`);
+    });
+  }
+  return response.json();
+})
+.then(data => {
+  console.log("Resposta da API:", data);
+  mensagemDiv.innerHTML = `Assinatura criada com sucesso!<br><br>
+    <a href="${data?.invoiceUrl || '#'}" target="_blank">Abrir link de pagamento</a>`;
+})
+.catch(error => {
+  console.error("Erro ao processar pagamento:", error);
+  mensagemDiv.textContent = "Erro ao processar pagamento: " + error.message;
 });
