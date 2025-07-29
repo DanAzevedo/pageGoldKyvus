@@ -21,6 +21,15 @@ botao.addEventListener('click', async () => {
             .limit(1)
             .get();
 
+        console.log("Buscando IDAssas com:", asaasId);
+
+        const docs = await db.collection('tb_users').get();
+        docs.forEach(d => {
+          const data = d.data();
+          console.log("DOC:", d.id, "IDAssas:", data.IDAssas);
+        });
+
+
         if (querySnapshot.empty) {
             alert('Usuário não encontrado.');
             botao.disabled = false;
