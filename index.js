@@ -5,22 +5,25 @@ const axios = require("axios");
 
 const app = express();
 
-// Libera CORS para qualquer origem OU especifique seu domínio:
-app.use(cors({ origin: true })); // ou: cors({ origin: "https://danazevedo.github.io" })
+// Configura CORS para aceitar requisições de qualquer origem (ajuste conforme necessário)
+app.use(cors({ origin: true }));
 
+// Permite receber JSON no body da requisição
 app.use(express.json());
 
+// Endpoint para criar assinatura Asaas via proxy
 app.post("/api/criarAssinaturaMembroAsaas", async (req, res) => {
   try {
     const payload = req.body;
 
+    // Chamada POST para a API Asaas
     const response = await axios.post(
       "https://www.asaas.com/api/v3/subscriptions",
       payload,
       {
         headers: {
-            "Authorization": "Bearer $aact_prod_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OmIzZGI5MGVlLTYyYzAtNGM0NC04MzAwLTIwY2FhNWVlODRkMzo6JGFhY2hfMTMxMWNlNWUtMTdhZi00ODBhLTg0Y2ItNDBkN2QwZWFkZjIx",
-            "Content-Type": "application/json"
+          "Authorization": "Bearer $aact_prod_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OmIzZGI5MGVlLTYyYzAtNGM0NC04MzAwLTIwY2FhNWVlODRkMzo6JGFhY2hfMTMxMWNlNWUtMTdhZi00ODBhLTg0Y2ItNDBkN2QwZWFkZjIx",
+          "Content-Type": "application/json"
         },
       }
     );
@@ -40,7 +43,7 @@ app.post("/api/criarAssinaturaMembroAsaas", async (req, res) => {
   }
 });
 
-// Exporta a função Cloud Function
+// Exporta a Cloud Function com região definida
 exports.asaasProxyApi = functions
   .region("southamerica-east1")
   .https.onRequest(app);
