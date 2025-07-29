@@ -1,54 +1,76 @@
-// Captura os parâmetros da URL
-const urlParams = new URLSearchParams(window.location.search);
-const asaasId = urlParams.get('asaasId'); // ex: cus_000xxx
-const carId = urlParams.get('carId');     // ex: ODvqxxx
+const functions = require("firebase-functions");
+const admin = require("firebase-admin");
+const cors = require("cors")({ origin: true });
+const fetch = require("node-fetch");
 
-const mensagemDiv = document.getElementById('mensagem');
+admin.initializeApp();
+const db = admin.firestore();
 
-// Verifica se os parâmetros existem
-if (!asaasId || !carId) {
-  mensagemDiv.textContent = 'Parâmetros ausentes na URL.';
-  throw new Error('Parâmetros obrigatórios não fornecidos.');
-}
+exports.pageGoldKyvus = functions.https.onRequest((req, res) => {
+  cors(req, res, async () => {
+    try {
+      const asaasId = req.query.asaasId;
+      const carId = req.query.carId;
 
-// Gera data de vencimento (amanhã)
-const today = new Date();
-const nextDueDate = new Date(today.setDate(today.getDate() + 1))
-  .toISOString()
-  .split('T')[0]; // Formato YYYY-MM-DD
+      if (!asaasId || !carId) {
+        return res.status(400).json({ error: "Parâmetros ausentes." });
+      }
 
-// Monta o corpo da requisição
-const body = {
-  billingType: "CREDIT_CARD",
-  cycle: "MONTHLY",
-  customer: asaasId,
-  value: 9.90,
-  nextDueDate: nextDueDate,
-  description: "Assinatura mensal membro"
-};
+      // Buscar usuário pelo campo IDAssas
+      const userSnapshot = await db.collection('tb_users')
+        .where('IDAssas', '==', asaasId)
+        .get();
 
-// Faz a requisição para o proxy
-fetch("https://asaas-proxy-api-703360123160.southamerica-east1.run.app/api/criarAssinaturaMembroAsaas", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json"
-  },
-  body: JSON.stringify(body)
-})
-.then(response => {
-  if (!response.ok) {
-    return response.text().then(text => {
-      throw new Error(`Erro do servidor: ${text}`);
-    });
-  }
-  return response.json();
-})
-.then(data => {
-  console.log("Resposta da API:", data);
-  mensagemDiv.innerHTML = `Assinatura criada com sucesso!<br><br>
-    <a href="${data?.invoiceUrl || '#'}" target="_blank">Abrir link de pagamento</a>`;
-})
-.catch(error => {
-  console.error("Erro ao processar pagamento:", error);
-  mensagemDiv.textContent = "Erro ao processar pagamento: " + error.message;
+      if (userSnapshot.empty) {
+        return res.status(404).json({ error: "Usuário não encontrado." });
+      }
+
+      const user = userSnapshot.docs[0].data();
+
+      // Buscar carro pelo ID
+      const carRef = await db.collection('tb_carros').doc(carId).get();
+      if (!carRef.exists) {
+        return res.status(404).json({ error: "Carro não encontrado." });
+      }
+
+      const car = carRef.data();
+
+      // Montar corpo da requisição da assinatura
+      const assinaturaBody = {
+        billingType: "CREDIT_CARD",
+        cycle: "MONTHLY",
+        customer: asaasId,
+        value: 9.90,
+        nextDueDate: new Date().toISOString().split("T")[0], // hoje
+        description: "Assinatura mensal membro"
+      };
+
+      // Chamada à API de criação de assinatura
+      const response = await fetch('https://asaas-proxy-api-703360123160.southamerica-east1.run.app/api/criarAssinaturaMembroAsaas', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(assinaturaBody)
+      });
+
+      if (!response.ok) {
+        const erro = await response.text();
+        throw new Error(`Erro ao criar assinatura: ${erro}`);
+      }
+
+      const resultado = await response.json();
+
+      return res.status(200).json({
+        message: "Assinatura criada com sucesso!",
+        user: user.name || user.email || "Usuário encontrado",
+        car: car.modelo || "Carro encontrado",
+        pagamento: resultado
+      });
+
+    } catch (err) {
+      console.error(err);
+      return res.status(500).json({ error: "Erro interno: " + err.message });
+    }
+  });
 });
