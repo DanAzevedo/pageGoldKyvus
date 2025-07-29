@@ -1,40 +1,49 @@
-// Função para criar assinatura Asaas direto no navegador
-async function criarAssinaturaMembroAsaas(payload) {
+const functions = require("firebase-functions");
+const express = require("express");
+const cors = require("cors");
+const axios = require("axios");
+
+const app = express();
+
+// Configura CORS para aceitar requisições de qualquer origem (ajuste conforme necessário)
+app.use(cors({ origin: true }));
+
+// Permite receber JSON no body da requisição
+app.use(express.json());
+
+// Endpoint para criar assinatura Asaas via proxy
+app.post("/api/criarAssinaturaMembroAsaas", async (req, res) => {
   try {
-    const response = await fetch("https://www.asaas.com/api/v3/subscriptions", {
-      method: "POST",
-      headers: {
-        "Authorization": "Bearer SEU_TOKEN_AQUI", // substitua pelo seu token real
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(payload),
+    const payload = req.body;
+
+    // Chamada POST para a API Asaas
+    const response = await axios.post(
+      "https://www.asaas.com/api/v3/subscriptions",
+      payload,
+      {
+        headers: {
+          "Authorization": "Bearer $aact_prod_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OmIzZGI5MGVlLTYyYzAtNGM0NC04MzAwLTIwY2FhNWVlODRkMzo6JGFhY2hfMTMxMWNlNWUtMTdhZi00ODBhLTg0Y2ItNDBkN2QwZWFkZjIx",
+          "Content-Type": "application/json"
+        },
+      }
+    );
+
+    res.status(200).json({
+      message: "Assinatura criada com sucesso",
+      invoiceUrl: response.data?.invoiceUrl || null,
+      response: response.data,
     });
 
-    if (!response.ok) {
-      const errorData = await response.json();
-      console.error("Erro ao criar assinatura:", errorData);
-      return { success: false, error: errorData };
-    }
-
-    const data = await response.json();
-    console.log("Assinatura criada com sucesso", data);
-    return { success: true, data };
-
   } catch (error) {
-    console.error("Erro inesperado:", error);
-    return { success: false, error };
-  }
-}
-
-// Exemplo de uso:
-const payload = {
-  // coloque aqui os dados da assinatura que a API Asaas espera
-};
-
-criarAssinaturaMembroAsaas(payload).then(result => {
-  if (result.success) {
-    alert("Assinatura criada! Veja no console.");
-  } else {
-    alert("Erro ao criar assinatura. Veja console.");
+    console.error("Erro ao criar assinatura:", error?.response?.data || error.message);
+    res.status(500).json({
+      message: "Erro ao criar assinatura",
+      error: error?.response?.data || error.message,
+    });
   }
 });
+
+// Exporta a Cloud Function com região definida
+exports.asaasProxyApi = functions
+  .region("southamerica-east1")
+  .https.onRequest(app);
