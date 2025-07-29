@@ -34,7 +34,7 @@ botao.addEventListener('click', async () => {
 
         const hoje = new Date().toISOString().split('T')[0];
 
-        const res = await fetch('https://pagegoldkyvus.onrender.com', {
+        const res = await fetch('https://danazevedo.github.io/pageGoldKyvus/', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
