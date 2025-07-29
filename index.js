@@ -5,7 +5,7 @@ const botao = document.querySelector('.bottom-button');
 
 botao.addEventListener('click', async () => {
     if (!asaasId || !carId) {
-        alert('Informações incompletas na URL. Acesse o link corretamente.');
+        alert('Parâmetros ausentes. Acesse o link corretamente.');
         return;
     }
 
@@ -14,16 +14,21 @@ botao.addEventListener('click', async () => {
 
     try {
         const db = firebase.firestore();
-        const doc = await db.collection('users').doc(userId).get();
 
-        if (!doc.exists) {
+        // Busca o usuário pelo campo asaas_id dentro da coleção tb_users
+        const userQuery = await db.collection('tb_users')
+            .where('asaas_id', '==', asaasId)
+            .limit(1)
+            .get();
+
+        if (userQuery.empty) {
             alert('Usuário não encontrado.');
             botao.disabled = false;
             botao.textContent = 'Adquira o Plano Gold';
             return;
         }
 
-        const userData = doc.data();
+        const userData = userQuery.docs[0].data();
         const email = userData.email;
 
         if (!email) {
@@ -35,13 +40,14 @@ botao.addEventListener('click', async () => {
 
         const hoje = new Date().toISOString().split('T')[0];
 
-        const res = await fetch('https://danazevedo.github.io/pageGoldKyvus/', {
+        const res = await fetch('https://pagegoldkyvus.onrender.com', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 email: email,
                 valor: 9.90,
-                vencimento: hoje
+                vencimento: hoje,
+                carroId: carId
             })
         });
 
