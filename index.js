@@ -1,26 +1,43 @@
-// Captura o botão no seu HTML
+// Função para pegar parâmetros da URL
+function getQueryParams() {
+  const params = {};
+  window.location.search
+    .substring(1)
+    .split("&")
+    .forEach(pair => {
+      const [key, value] = pair.split("=");
+      if (key) params[decodeURIComponent(key)] = decodeURIComponent(value || "");
+    });
+  return params;
+}
+
+const params = getQueryParams();
+
 const botaoPlanoGold = document.querySelector('.bottom-button');
 
 botaoPlanoGold.addEventListener('click', async () => {
-  // Dados que você quer enviar para criar a assinatura
+  // Monta o payload usando parâmetros da URL
   const payload = {
-    customer: "cus_000123842344",  // Exemplo: id do cliente na Asaas
-    billingType: "CREDIT_CARD",
-    nextDueDate: "2025-08-30",
-    value: 9.90,
-    cycle: "MONTHLY",
-    description: "Assinatura Plano Gold",
-    // adicione outros campos conforme a API da Asaas exigir
+    customer: params.customer || "",           // Exemplo: id do cliente vindo na URL
+    nextDueDate: params.nextDueDate || "",     // Data de vencimento na URL
+    billingType: params.billingType || "CREDIT_CARD", // Ou qualquer valor fixo/variável
+    value: parseFloat(params.value) || 9.90,   // Valor passado na URL ou default
+    cycle: params.cycle || "MONTHLY",
+    description: params.description || "Assinatura Plano Gold",
+    // Adicione outros campos que precisar...
   };
+
+  if (!payload.customer || !payload.nextDueDate) {
+    alert("Parâmetros essenciais ausentes na URL!");
+    return;
+  }
 
   try {
     const response = await fetch(
       "https://southamerica-east1-kyvus-gold-page.cloudfunctions.net/asaasProxyApi/api/criarAssinaturaMembroAsaas",
       {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       }
     );
@@ -36,7 +53,6 @@ botaoPlanoGold.addEventListener('click', async () => {
     console.log("Assinatura criada com sucesso:", data);
     alert("Assinatura criada com sucesso!");
 
-    // Aqui você pode redirecionar o usuário para o link de pagamento, se existir:
     if (data.invoiceUrl) {
       window.location.href = data.invoiceUrl;
     }
