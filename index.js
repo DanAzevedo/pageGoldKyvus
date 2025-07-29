@@ -1,76 +1,46 @@
 const functions = require("firebase-functions");
-const admin = require("firebase-admin");
-const cors = require("cors")({ origin: true });
-const fetch = require("node-fetch");
+const express = require("express");
+const cors = require("cors");
+const axios = require("axios");
 
-admin.initializeApp();
-const db = admin.firestore();
+const app = express();
 
-exports.pageGoldKyvus = functions.https.onRequest((req, res) => {
-  cors(req, res, async () => {
-    try {
-      const asaasId = req.query.asaasId;
-      const carId = req.query.carId;
+// Libera CORS para qualquer origem OU especifique seu domínio:
+app.use(cors({ origin: true })); // ou: cors({ origin: "https://danazevedo.github.io" })
 
-      if (!asaasId || !carId) {
-        return res.status(400).json({ error: "Parâmetros ausentes." });
-      }
+app.use(express.json());
 
-      // Buscar usuário pelo campo IDAssas
-      const userSnapshot = await db.collection('tb_users')
-        .where('IDAssas', '==', asaasId)
-        .get();
+app.post("/api/criarAssinaturaMembroAsaas", async (req, res) => {
+  try {
+    const payload = req.body;
 
-      if (userSnapshot.empty) {
-        return res.status(404).json({ error: "Usuário não encontrado." });
-      }
-
-      const user = userSnapshot.docs[0].data();
-
-      // Buscar carro pelo ID
-      const carRef = await db.collection('tb_carros').doc(carId).get();
-      if (!carRef.exists) {
-        return res.status(404).json({ error: "Carro não encontrado." });
-      }
-
-      const car = carRef.data();
-
-      // Montar corpo da requisição da assinatura
-      const assinaturaBody = {
-        billingType: "CREDIT_CARD",
-        cycle: "MONTHLY",
-        customer: asaasId,
-        value: 9.90,
-        nextDueDate: new Date().toISOString().split("T")[0], // hoje
-        description: "Assinatura mensal membro"
-      };
-
-      // Chamada à API de criação de assinatura
-      const response = await fetch('https://asaas-proxy-api-703360123160.southamerica-east1.run.app/api/criarAssinaturaMembroAsaas', {
-        method: 'POST',
+    const response = await axios.post(
+      "https://www.asaas.com/api/v3/subscriptions",
+      payload,
+      {
         headers: {
-          'Content-Type': 'application/json'
+          Authorization: "access_token": "$aact_prod_000MzkwODA2MWY2OGM3MWRlMDU2NWM3MzJlNzZmNGZhZGY6OmIzZGI5MGVlLTYyYzAtNGM0NC04MzAwLTIwY2FhNWVlODRkMzo6JGFhY2hfMTMxMWNlNWUtMTdhZi00ODBhLTg0Y2ItNDBkN2QwZWFkZjIx",
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(assinaturaBody)
-      });
-
-      if (!response.ok) {
-        const erro = await response.text();
-        throw new Error(`Erro ao criar assinatura: ${erro}`);
       }
+    );
 
-      const resultado = await response.json();
+    res.status(200).json({
+      message: "Assinatura criada com sucesso",
+      invoiceUrl: response.data?.invoiceUrl || null,
+      response: response.data,
+    });
 
-      return res.status(200).json({
-        message: "Assinatura criada com sucesso!",
-        user: user.name || user.email || "Usuário encontrado",
-        car: car.modelo || "Carro encontrado",
-        pagamento: resultado
-      });
-
-    } catch (err) {
-      console.error(err);
-      return res.status(500).json({ error: "Erro interno: " + err.message });
-    }
-  });
+  } catch (error) {
+    console.error("Erro ao criar assinatura:", error?.response?.data || error.message);
+    res.status(500).json({
+      message: "Erro ao criar assinatura",
+      error: error?.response?.data || error.message,
+    });
+  }
 });
+
+// Exporta a função Cloud Function
+exports.asaasProxyApi = functions
+  .region("southamerica-east1")
+  .https.onRequest(app);
