@@ -7,19 +7,15 @@ document.addEventListener("DOMContentLoaded", function () {
 
   btnPagar.addEventListener("click", async () => {
     try {
-      const response = await fetch("https://www.asaas.com/api/v3/subscriptions/" + idAsaas + "/payments", {
+      const response = await fetch("https://asaas-proxy-api-703360123160.southamerica-east1.run.app/api/iniciarPagamentoMembro", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json",
-          "Accept": "application/json",
-          "Authorization": "Bearer eTL6MkRCywEA5wnP8NUMQbu0vxZ1uhUJj7hPbUgEJgTVA38dwcRYt98XTUcE03cCT" // ⚠️ NÃO USAR EM PRODUÇÃO
+          "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          billingType: "CREDIT_CARD",
-          cycle: "MONTHLY",
-          value: 9.90,
-          nextDueDate: new Date().toISOString().split("T")[0],
-          description: "Assinatura mensal membro"
+          idAsaas: idAsaas,
+          idCarro: idCarro,
+          access_token: "eTL6MkRCywEA5wnP8NUMQbu0vxZ1uhUJj7hPbUgEJgTVA38dwcRYt98XTUcE03cCT"  // ⚠️ SÓ USE ISSO SE A SUA PROXY EXIGIR
         })
       });
 
@@ -29,12 +25,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const result = await response.json();
 
-      // Redireciona para o link de pagamento (se existir)
-      if (result?.invoiceUrl || result?.bankSlipUrl || result?.checkoutUrl) {
-        window.location.href = result.invoiceUrl || result.bankSlipUrl || result.checkoutUrl;
+      if (result?.url) {
+        window.location.href = result.url;
       } else {
-        alert("Pagamento criado, mas sem URL para redirecionamento.");
-        console.log("Resposta da API:", result);
+        alert("Erro: resposta sem URL");
+        console.log("Resposta:", result);
       }
     } catch (error) {
       console.error("Erro ao processar pagamento:", error);
