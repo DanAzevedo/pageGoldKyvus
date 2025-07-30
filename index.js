@@ -1,56 +1,51 @@
-// Pega parâmetros da URL
-const urlParams = new URLSearchParams(window.location.search);
-const customer = urlParams.get('customer');
-const nextDueDate = urlParams.get('nextDueDate');
+document.addEventListener('DOMContentLoaded', () => {
+  const pagarBtn = document.getElementById('pagarBtn');
+  const statusEl = document.getElementById('status');
 
-// Verifica se os parâmetros obrigatórios estão presentes
-if (!customer || !nextDueDate) {
-  alert("Erro: customer ou nextDueDate não encontrados na URL.");
-  throw new Error("Parâmetros obrigatórios ausentes.");
-}
+  // Captura parâmetros da URL
+  const urlParams = new URLSearchParams(window.location.search);
+  const idAsaas = urlParams.get('idAssas');
+  const idCarro = urlParams.get('idCarro');
 
-// Pegue seu botão no HTML
-const botaoPlanoGold = document.querySelector('.bottom-button');
-
-botaoPlanoGold.addEventListener('click', async () => {
-  const payload = {
-    customer: customer,
-    billingType: "CREDIT_CARD",
-    nextDueDate: nextDueDate,
-    value: 9.90,
-    cycle: "MONTHLY",
-    description: "Assinatura Plano Gold",
-  };
-
-  try {
-    const resposta = await fetch(
-      "https://us-central1-kyvus-gold-page.cloudfunctions.net/asaasProxyApi/api/criarAssinaturaMembroAsaas",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(payload),
-      }
-    );
-
-    if (!resposta.ok) {
-      const err = await resposta.json();
-      console.error("Erro no backend:", err);
-      alert("Erro ao criar assinatura. Veja console.");
-      return;
-    }
-
-    const dados = await resposta.json();
-    console.log("Sucesso:", dados);
-    alert("Assinatura criada com sucesso!");
-
-    if (dados.invoiceUrl) {
-      window.location.href = dados.invoiceUrl; // redireciona para pagamento
-    }
-
-  } catch (err) {
-    console.error("Erro inesperado:", err);
-    alert("Erro inesperado. Veja console.");
+  if (!idAsaas || !idCarro) {
+    statusEl.innerText = 'Parâmetros ausentes na URL.';
+    pagarBtn.disabled = true;
+    return;
   }
+
+  pagarBtn.addEventListener('click', async () => {
+    statusEl.innerText = 'Processando pagamento...';
+    pagarBtn.disabled = true;
+
+    try {
+      const res = await fetch('https://asaas-proxy-api-703360123160.southamerica-east1.run.app/api/iniciarPagamentoMembro', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // 'Authorization': 'Bearer <se necessário>'
+        },
+        body: JSON.stringify({
+          idAsaas: idAsaas,
+          idCarro: idCarro
+        })
+      });
+
+      if (!res.ok) {
+        throw new Error(`Erro HTTP ${res.status}`);
+      }
+
+      const data = await res.json();
+
+      if (data?.invoiceUrl) {
+        window.location.href = data.invoiceUrl;
+      } else {
+        statusEl.innerText = 'Pagamento iniciado, mas URL de cobrança não retornada.';
+      }
+
+    } catch (error) {
+      console.error('Erro ao processar pagamento:', error);
+      statusEl.innerText = 'Erro ao processar pagamento. Veja o console para detalhes.';
+      pagarBtn.disabled = false;
+    }
+  });
 });
