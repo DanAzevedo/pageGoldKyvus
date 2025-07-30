@@ -20,7 +20,7 @@
             background: linear-gradient(135deg, 
                 rgba(67, 51, 36, 0.2) 0%, 
                 rgba(76, 60, 36, 0.4) 100%);
-            border: 1px solid rgba(217, 119, 6, 0.3);
+            border: 1px solid rgba(150, 80, 6, 0.3);
             border-radius: 16px;
             padding: 24px;
             backdrop-filter: blur(10px);
@@ -209,7 +209,7 @@
         }
 
         .bottom-button:hover {
-            background: rgba(146, 64, 14, 0.7);
+            background: rgba(245, 158, 11, 0.7);
             transform: translateY(-1px);
         }
 
