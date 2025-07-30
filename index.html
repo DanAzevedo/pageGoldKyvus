@@ -11,17 +11,16 @@
     <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
     <script>
         const firebaseConfig = {
-        apiKey: "AIzaSyDp3IkvxJUUr37X5tmrejVf1mwnWSGXB6o",
-        authDomain: "projetokyvus.firebaseapp.com",
-        projectId: "projetokyvus",
-        storageBucket: "projetokyvus.firebasestorage.app",
-        messagingSenderId: "703360123160",
-        appId: "1:703360123160:web:be51c60a7d3aaa510b5e6d",
-        measurementId: "G-QD4JVP3V2Q"
+            apiKey: "AIzaSyDp3IkvxJUUr37X5tmrejVf1mwnWSGXB6o",
+            authDomain: "projetokyvus.firebaseapp.com",
+            projectId: "projetokyvus",
+            storageBucket: "projetokyvus.firebasestorage.app",
+            messagingSenderId: "703360123160",
+            appId: "1:703360123160:web:be51c60a7d3aaa510b5e6d",
+            measurementId: "G-QD4JVP3V2Q"
         };
         firebase.initializeApp(firebaseConfig);
     </script>
-
 </head>
 
 <body>
@@ -40,50 +39,24 @@
         </div>
 
         <div class="benefits-list">
-            <div class="benefit-item">
-                <div class="checkmark"></div>
-                <div class="benefit-text">Desconto manutenção corretiva</div>
-            </div>
-            <div class="benefit-item">
-                <div class="checkmark"></div>
-                <div class="benefit-text">Desconto na revisão do veículo</div>
-            </div>
-            <div class="benefit-item">
-                <div class="checkmark"></div>
-                <div class="benefit-text">Desconto em peças autógenas</div>
-            </div>
-            <div class="benefit-item">
-                <div class="checkmark"></div>
-                <div class="benefit-text">Desconto em serviços de estética</div>
-            </div>
-            <div class="benefit-item">
-                <div class="checkmark"></div>
-                <div class="benefit-text">Desconto em guinches e serviços de emergenciais</div>
-            </div>
-            <div class="benefit-item">
-                <div class="checkmark"></div>
-                <div class="benefit-text">Descontos em postos de combustível parceiros</div>
-            </div>
-            <div class="benefit-item">
-                <div class="checkmark"></div>
-                <div class="benefit-text">Descontos em aluguel de carros</div>
-            </div>
-            <div class="benefit-item">
-                <div class="checkmark"></div>
-                <div class="benefit-text">Contato direto com IA especialista</div>
-            </div>
-            <div class="benefit-item">
-                <div class="checkmark"></div>
-                <div class="benefit-text">Descontos em seguradoras parceiras</div>
-            </div>
+            <div class="benefit-item"><div class="checkmark"></div><div class="benefit-text">Desconto manutenção corretiva</div></div>
+            <div class="benefit-item"><div class="checkmark"></div><div class="benefit-text">Desconto na revisão do veículo</div></div>
+            <div class="benefit-item"><div class="checkmark"></div><div class="benefit-text">Desconto em peças autógenas</div></div>
+            <div class="benefit-item"><div class="checkmark"></div><div class="benefit-text">Desconto em serviços de estética</div></div>
+            <div class="benefit-item"><div class="checkmark"></div><div class="benefit-text">Desconto em guinches e serviços de emergenciais</div></div>
+            <div class="benefit-item"><div class="checkmark"></div><div class="benefit-text">Descontos em postos de combustível parceiros</div></div>
+            <div class="benefit-item"><div class="checkmark"></div><div class="benefit-text">Descontos em aluguel de carros</div></div>
+            <div class="benefit-item"><div class="checkmark"></div><div class="benefit-text">Contato direto com IA especialista</div></div>
+            <div class="benefit-item"><div class="checkmark"></div><div class="benefit-text">Descontos em seguradoras parceiras</div></div>
         </div>
 
-        <button class="bottom-button">
+        <button class="bottom-button" id="pagarBtn">
             Adquira o Plano Gold
         </button>
+
+        <p id="status" style="text-align:center; margin-top: 10px;"></p>
     </div>
 
     <script src="index.js"></script>
-
 </body>
 </html>
