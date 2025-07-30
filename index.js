@@ -15,7 +15,7 @@ botaoPlanoGold.addEventListener('click', async () => {
 
   try {
     const resposta = await fetch(
-      "https://southamerica-east1-kyvus-gold-page.cloudfunctions.net/asaasProxyApi/api/criarAssinaturaMembroAsaas",
+      "https://us-central1-kyvus-gold-page.cloudfunctions.net/asaasProxyApi/api/criarAssinaturaMembroAsaas",
       {
         method: "POST",
         headers: {
