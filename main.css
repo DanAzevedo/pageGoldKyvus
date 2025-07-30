@@ -18,9 +18,22 @@
             width: 100%;
             max-width: 350px;
             background: linear-gradient(135deg, 
-                rgba(146, 64, 14, 0.2) 0%, 
-                rgba(120, 53, 15, 0.4) 100%);
+                rgba(67, 51, 36, 0.2) 0%, 
+                rgba(76, 60, 36, 0.4) 100%);
             border: 1px solid rgba(217, 119, 6, 0.3);
+            border-radius: 16px;
+            padding: 24px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.3);
+        }
+
+        .card-black {
+            width: 100%;
+            max-width: 350px;
+            background: linear-gradient(135deg, 
+                rgba(22, 22, 22, 0.2) 0%, 
+                rgba(27, 27, 27, 0.4) 100%);
+            border: 1px solid rgba(130, 130, 130, 0.3);
             border-radius: 16px;
             padding: 24px;
             backdrop-filter: blur(10px);
@@ -51,6 +64,17 @@
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
         }
 
+        .logo-black {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #000000 0%, #1C1C1C 100%);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+        }
+
         .logo-text {
             color: white;
             font-size: 20px;
@@ -59,6 +83,13 @@
 
         .gold-text {
             color: #fbbf24;
+            font-size: 18px;
+            font-weight: 300;
+            letter-spacing: 0.2em;
+        }
+
+        .black-text {
+            color: #ffffff;
             font-size: 18px;
             font-weight: 300;
             letter-spacing: 0.2em;
@@ -107,7 +138,38 @@
             margin-top: 2px;
         }
 
+        .checkmark {
+            width: 20px;
+            height: 20px;
+            background: #ffffff;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
         .checkmark::after {
+            content: '✓';
+            color: black;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .checkmark-black {
+            width: 20px;
+            height: 20px;
+            background: #000000;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .checkmark-black::after {
             content: '✓';
             color: white;
             font-size: 12px;
@@ -122,8 +184,21 @@
 
         .bottom-button {
             width: 100%;
-            background: rgba(146, 64, 14, 0.5);
-            border: 1px solid rgba(217, 119, 6, 0.5);
+            background: rgba(20, 12, 12, 0.5);
+            border: 1px solid rgba(20, 12, 12, 0.5);
+            color: white;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 12px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .bottom-button-black {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(0, 0, 0, 0.5);
             color: white;
             font-size: 14px;
             font-weight: 500;
@@ -138,7 +213,16 @@
             transform: translateY(-1px);
         }
 
+        .bottom-button-black:hover {
+            background: rgba(83, 83, 83, 0.7);
+            transform: translateY(-1px);
+        }
+
         .bottom-button:active {
+            transform: translateY(0);
+        }
+
+        .bottom-button-black:active {
             transform: translateY(0);
         }
 
