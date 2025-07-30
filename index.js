@@ -1,9 +1,9 @@
 document.addEventListener("DOMContentLoaded", function () {
   const params = new URLSearchParams(window.location.search);
-  const idAssas = params.get("idAssas");  // Certifique que está escrito assim na URL
+  const idAsaas = params.get("idAsaas");  // Corrigido para 'idAsaas' conforme URL
   const idCarro = params.get("idCarro");
 
-  const btnPagar = document.querySelector(".bottom-button");
+  const btnPagar = document.getElementById("btn-pagamento");
 
   if (!btnPagar) {
     console.error("Botão para pagamento não encontrado!");
@@ -11,9 +11,9 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 
   btnPagar.addEventListener("click", async () => {
-    if (!idAssas || !idCarro) {
+    if (!idAsaas || !idCarro) {
       alert("Erro: parâmetros 'idAsaas' ou 'idCarro' ausentes na URL.");
-      console.error("Parâmetros URL ausentes:", { idAssas, idCarro });
+      console.error("Parâmetros URL ausentes:", { idAsaas, idCarro });
       return;
     }
 
@@ -24,9 +24,9 @@ document.addEventListener("DOMContentLoaded", function () {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          idAsaas: idAssas,
+          idAsaas: idAsaas,
           idCarro: idCarro,
-          access_token: "eTL6MkRCywEA5wnP8NUMQbu0vxZ1uhUJj7hPbUgEJgTVA38dwcRYt98XTUcE03cCT"  // Use somente se necessário
+          access_token: "eTL6MkRCywEA5wnP8NUMQbu0vxZ1uhUJj7hPbUgEJgTVA38dwcRYt98XTUcE03cCT"  // Só se sua API exigir
         })
       });
 
