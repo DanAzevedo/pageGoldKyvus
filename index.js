@@ -1,51 +1,44 @@
-document.addEventListener('DOMContentLoaded', () => {
-  const pagarBtn = document.getElementById('pagarBtn');
-  const statusEl = document.getElementById('status');
+document.addEventListener("DOMContentLoaded", function () {
+  const params = new URLSearchParams(window.location.search);
+  const idAsaas = params.get("idAssas");
+  const idCarro = params.get("idCarro");
 
-  // Captura parâmetros da URL
-  const urlParams = new URLSearchParams(window.location.search);
-  const idAsaas = urlParams.get('idAssas');
-  const idCarro = urlParams.get('idCarro');
+  const btnPagar = document.getElementById("btn-pagamento");
 
-  if (!idAsaas || !idCarro) {
-    statusEl.innerText = 'Parâmetros ausentes na URL.';
-    pagarBtn.disabled = true;
-    return;
-  }
-
-  pagarBtn.addEventListener('click', async () => {
-    statusEl.innerText = 'Processando pagamento...';
-    pagarBtn.disabled = true;
-
+  btnPagar.addEventListener("click", async () => {
     try {
-      const res = await fetch('https://asaas-proxy-api-703360123160.southamerica-east1.run.app/api/iniciarPagamentoMembro', {
-        method: 'POST',
+      const response = await fetch("https://www.asaas.com/api/v3/subscriptions/" + idAsaas + "/payments", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
-          // 'Authorization': 'Bearer <se necessário>'
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Authorization": "Bearer eTL6MkRCywEA5wnP8NUMQbu0vxZ1uhUJj7hPbUgEJgTVA38dwcRYt98XTUcE03cCT" // ⚠️ NÃO USAR EM PRODUÇÃO
         },
         body: JSON.stringify({
-          idAsaas: idAsaas,
-          idCarro: idCarro
+          billingType: "CREDIT_CARD",
+          cycle: "MONTHLY",
+          value: 9.90,
+          nextDueDate: new Date().toISOString().split("T")[0],
+          description: "Assinatura mensal membro"
         })
       });
 
-      if (!res.ok) {
-        throw new Error(`Erro HTTP ${res.status}`);
+      if (!response.ok) {
+        throw new Error(`Erro HTTP ${response.status}`);
       }
 
-      const data = await res.json();
+      const result = await response.json();
 
-      if (data?.invoiceUrl) {
-        window.location.href = data.invoiceUrl;
+      // Redireciona para o link de pagamento (se existir)
+      if (result?.invoiceUrl || result?.bankSlipUrl || result?.checkoutUrl) {
+        window.location.href = result.invoiceUrl || result.bankSlipUrl || result.checkoutUrl;
       } else {
-        statusEl.innerText = 'Pagamento iniciado, mas URL de cobrança não retornada.';
+        alert("Pagamento criado, mas sem URL para redirecionamento.");
+        console.log("Resposta da API:", result);
       }
-
     } catch (error) {
-      console.error('Erro ao processar pagamento:', error);
-      statusEl.innerText = 'Erro ao processar pagamento. Veja o console para detalhes.';
-      pagarBtn.disabled = false;
+      console.error("Erro ao processar pagamento:", error);
+      alert("Erro ao processar pagamento: " + error.message);
     }
   });
 });
