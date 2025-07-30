@@ -1,16 +1,26 @@
-// Pegue seu botão no HTML
+// Seleciona o botão com a classe CSS
 const botaoPlanoGold = document.querySelector('.bottom-button');
 
 botaoPlanoGold.addEventListener('click', async () => {
-  // Monte o payload que a API da Asaas espera
+  // Captura parâmetros da URL (ex: ?customer=cus_123&nextDueDate=2025-08-29)
+  const urlParams = new URLSearchParams(window.location.search);
+  const customer = urlParams.get("customer");
+  const nextDueDate = urlParams.get("nextDueDate");
+
+  if (!customer || !nextDueDate) {
+    alert("Erro: customer ou nextDueDate não encontrados na URL.");
+    console.error("Parâmetros ausentes: ", { customer, nextDueDate });
+    return;
+  }
+
+  // Monta o payload para a API Asaas
   const payload = {
-    customer: "cus_000123842344",        // Pode vir da URL, localStorage, etc
+    customer,
     billingType: "CREDIT_CARD",
-    nextDueDate: "2025-08-29",
+    nextDueDate,
     value: 9.90,
     cycle: "MONTHLY",
-    description: "Assinatura Plano Gold",
-    // outros campos se precisar
+    description: "Assinatura Plano Gold"
   };
 
   try {
@@ -28,7 +38,7 @@ botaoPlanoGold.addEventListener('click', async () => {
     if (!resposta.ok) {
       const err = await resposta.json();
       console.error("Erro no backend:", err);
-      alert("Erro ao criar assinatura. Veja console.");
+      alert("Erro ao criar assinatura. Veja o console.");
       return;
     }
 
@@ -36,12 +46,15 @@ botaoPlanoGold.addEventListener('click', async () => {
     console.log("Sucesso:", dados);
     alert("Assinatura criada com sucesso!");
 
+    // Redireciona para o link da cobrança
     if (dados.invoiceUrl) {
-      window.location.href = dados.invoiceUrl; // redireciona para pagamento
+      window.location.href = dados.invoiceUrl;
+    } else {
+      alert("Assinatura criada, mas sem link de pagamento retornado.");
     }
 
   } catch (err) {
     console.error("Erro inesperado:", err);
-    alert("Erro inesperado. Veja console.");
+    alert("Erro inesperado ao tentar criar a assinatura.");
   }
 });
