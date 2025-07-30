@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", function () {
         body: JSON.stringify({
           idAsaas: idAssas,
           idCarro: idCarro,
-          access_token: "$eTL6MkRCywEA5wnP8NUMQbu0vxZ1uhUJj7hPbUgEJgTVA38dwcRYt98XTUcE03cCT"  // Use somente se necessário
+          access_token: "eTL6MkRCywEA5wnP8NUMQbu0vxZ1uhUJj7hPbUgEJgTVA38dwcRYt98XTUcE03cCT"  // Use somente se necessário
         })
       });
 
