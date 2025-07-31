@@ -1,4 +1,34 @@
-try {
+document.addEventListener("DOMContentLoaded", function () {
+  const params = new URLSearchParams(window.location.search);
+  const idAsaas = params.get("idAsaas");
+  const idCarro = params.get("idCarro");
+
+  console.log("🔍 Parâmetros da URL:");
+  console.log("idAsaas:", idAsaas);
+  console.log("idCarro:", idCarro);
+
+  const btnPagar = document.getElementById("btn-pagamento");
+
+  if (!btnPagar) {
+    console.error("❌ Botão para pagamento não encontrado!");
+    return;
+  }
+
+  btnPagar.addEventListener("click", async () => {
+    if (!idAsaas || !idCarro) {
+      alert("Erro: parâmetros 'idAsaas' ou 'idCarro' ausentes na URL.");
+      console.error("❌ Parâmetros ausentes:", { idAsaas, idCarro });
+      return;
+    }
+
+    const payload = {
+      idAsaas: idAsaas,
+      idCarro: idCarro
+    };
+
+    console.log("📦 Enviando para API:", payload);
+
+   try {
   const response = await fetch("https://asaas-proxy-api-703360123160.southamerica-east1.run.app/api/iniciarPagamentoMembro", {
     method: "POST",
     headers: {
@@ -40,3 +70,6 @@ try {
   console.error("❌ Erro de rede ou sistema:", error);
   alert("Erro ao processar pagamento: " + error.message);
 }
+
+  });
+});
