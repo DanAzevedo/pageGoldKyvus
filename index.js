@@ -42,6 +42,10 @@ document.addEventListener("DOMContentLoaded", function () {
         alert("Erro: resposta sem URL");
         console.log("Resposta da API:", result);
       }
+
     } catch (error) {
       console.error("Erro ao processar pagamento:", error);
-      aler
+      alert("Erro ao processar pagamento: " + error.message);
+    }
+  });
+});
