@@ -58,6 +58,8 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
+      console.log("📦 Resposta da API:", result);
+
       if (result?.invoiceUrl) {
         console.log("🔁 Redirecionando para invoiceUrl:", result.invoiceUrl);
         window.location.href = result.invoiceUrl;
