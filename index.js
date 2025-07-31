@@ -28,7 +28,7 @@ document.addEventListener("DOMContentLoaded", function () {
           idAsaas: idAsaas,
           idCarro: idCarro
         })
-      });
+      }
 
       if (!response.ok) {
         throw new Error(`Erro HTTP ${response.status}`);
