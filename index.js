@@ -61,7 +61,7 @@ document.addEventListener("DOMContentLoaded", function () {
       console.log("📦 Resposta da API:", result);
 
       if (result?.invoiceUrl) {
-        console.log("🔁 Redirecionando para invoiceUrl:", result.invoiceUrl);
+        console.log("🔁 Redirecionando para:", result.invoiceUrl);
         window.location.href = result.invoiceUrl;
       } else {
         alert("Erro: resposta da API não contém invoiceUrl.");
