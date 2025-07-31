@@ -58,11 +58,11 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
       }
 
-      if (result?.url) {
-        console.log("🔁 Redirecionando para:", result.url);
-        window.location.href = result.url;
+      if (result?.invoiceUrl) {
+        console.log("🔁 Redirecionando para invoiceUrl:", result.invoiceUrl);
+        window.location.href = result.invoiceUrl;
       } else {
-        alert("Erro: resposta da API não contém uma URL.");
+        alert("Erro: resposta da API não contém invoiceUrl.");
         console.log("Resposta completa da API:", result);
       }
 
