@@ -1,6 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   const params = new URLSearchParams(window.location.search);
-  const idAsaas = params.get("idAsaas");  // Corrigido para 'idAsaas' conforme URL
+  const idAsaas = params.get("idAsaas");
   const idCarro = params.get("idCarro");
 
   const btnPagar = document.getElementById("btn-pagamento");
@@ -22,16 +22,16 @@ document.addEventListener("DOMContentLoaded", function () {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          'Authorization': 'Bearer eTL6MkRCywEA5wnP8NUMQbu0vxZ1uhUJj7hPbUgEJgTVA38dwcRYt98XTUcE03cCT'
+          "access_token": "eTL6MkRCywEA5wnP8NUMQbu0vxZ1uhUJj7hPbUgEJgTVA38dwcRYt98XTUcE03cCT"
         },
         body: JSON.stringify({
           idAsaas: idAsaas,
-          idCarro: idCarro,
+          idCarro: idCarro
         })
       });
 
       if (!response.ok) {
-        throw new Error(`Erro HTTP ${response.status}`);
+        throw new Error(Erro HTTP ${response.status});
       }
 
       const result = await response.json();
@@ -40,7 +40,7 @@ document.addEventListener("DOMContentLoaded", function () {
         window.location.href = result.url;
       } else {
         alert("Erro: resposta sem URL");
-        console.log("Resposta:", result);
+        console.log("Resposta da API:", result);
       }
     } catch (error) {
       console.error("Erro ao processar pagamento:", error);
