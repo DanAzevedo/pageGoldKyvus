@@ -31,7 +31,7 @@ document.addEventListener("DOMContentLoaded", function () {
       });
 
       if (!response.ok) {
-        throw new Error(Erro HTTP ${response.status});
+        throw new Error(`Erro HTTP ${response.status}`);
       }
 
       const result = await response.json();
@@ -44,7 +44,4 @@ document.addEventListener("DOMContentLoaded", function () {
       }
     } catch (error) {
       console.error("Erro ao processar pagamento:", error);
-      alert("Erro ao processar pagamento: " + error.message);
-    }
-  });
-});
+      aler
