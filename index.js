@@ -21,12 +21,12 @@ document.addEventListener("DOMContentLoaded", function () {
       const response = await fetch("https://asaas-proxy-api-703360123160.southamerica-east1.run.app/api/iniciarPagamentoMembro", {
         method: "POST",
         headers: {
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
+           access_token: "eTL6MkRCywEA5wnP8NUMQbu0vxZ1uhUJj7hPbUgEJgTVA38dwcRYt98XTUcE03cCT"
         },
         body: JSON.stringify({
           idAsaas: idAsaas,
           idCarro: idCarro,
-          access_token: "eTL6MkRCywEA5wnP8NUMQbu0vxZ1uhUJj7hPbUgEJgTVA38dwcRYt98XTUcE03cCT"  // Só se sua API exigir
         })
       });
 
